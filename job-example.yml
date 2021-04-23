@@ -5,3 +5,7 @@ files: [
   /home/dev/gwpc/pc808wc/modules/configuration/config/web/pcf/account/AccountFile_Summary_BasicInfoDV.pcf,
   /home/dev/gwpc/pc808wc/modules/configuration/gsrc/gw/pcf/policysummary/PolicySummaryHelper.gs
 ]
+stub:
+  - val1
+  - val2
+stub-right: stub-right
