@@ -8,6 +8,7 @@ public class Var {
   private VarType type;
   private StringBuffer valBuffer = new StringBuffer();
   private Object val;
+  private boolean built;
 
   public Var(String name) {
     this.name = name;
@@ -35,30 +36,33 @@ public class Var {
   }
 
   public void build() throws YmlParseException {
-    switch (type) {
-      case TXT:
-        val = valBuffer.toString();
-        break;
-      case BRACKET_ARR:
-        buildBracketArray();
-        break;
-      case HYPHEN_ARR:
-        buildHyphenArray();
-        break;
-      default:
+    if (!built) {
+      built = true;
+      switch (type) {
+        case TXT:
+          val = valBuffer.toString();
+          break;
+        case BRACKET_ARR:
+          buildBracketArray();
+          break;
+        case HYPHEN_ARR:
+          buildHyphenArray();
+          break;
+        default:
+      }
     }
   }
 
   void buildBracketArray() {
-    String[] separated = valBuffer.toString().split(",");
-    val = new String[separated.length];
-    for (int i = 0; i < separated.length; i++) {
-      ((String[]) val)[i] = separated[i].trim();
-    }
+    buildArray(",");
   }
 
   void buildHyphenArray() {
-    String[] separated = valBuffer.toString().split("\n");
+    buildArray("\n");
+  }
+
+  void buildArray(String separator) {
+    String[] separated = valBuffer.toString().split(separator);
     val = new String[separated.length];
     for (int i = 0; i < separated.length; i++) {
       ((String[]) val)[i] = separated[i].trim();
@@ -91,7 +95,7 @@ public class Var {
         break;
       case BRACKET_ARR:
       case HYPHEN_ARR:
-        StringBuilder sb = new StringBuilder("[");
+        StringBuilder sb = new StringBuilder("[\n");
         for (int i = 0; i < ((String[]) val).length; i++) {
           sb.append(((String[]) val)[i]).append(",\n");
         }
