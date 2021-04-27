@@ -36,9 +36,13 @@ public class Parse {
         }
         line = reader.readLine();
       }
+      if (vr != null) {
+        vr.build();
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
+    printMap();
   }
 
   void parseLine(String line) throws YmlParseException {
@@ -47,11 +51,10 @@ public class Parse {
         findVar(line);
         break;
       case FIND_TYPE:
-        System.out.println("FIND_TYPE");
         findType(line);
         break;
       case READ_VAR:
-        System.out.println("READ_VAR");
+        readVar(line);
         break;
       default:
     }
@@ -64,7 +67,11 @@ public class Parse {
       throw new YmlParseException("Meaningless statement before # sign: \"{0}\".", line);
     }
     if (colonIndex < 1) {
-      throw new YmlParseException("Meaningless statement: \"{0}\".", line);
+      if ((line.length() > 1) && (line.charAt(line.length() - 1) == ':')) {
+        colonIndex = line.length() - 1;
+      } else {
+        throw new YmlParseException("Meaningless statement: \"{0}\".", line);
+      }
     }
 
     String noComment = (hashIndex > 0) ? line.substring(hashIndex + 2) : line;
@@ -75,20 +82,20 @@ public class Parse {
       throw new YmlParseException("Wrong var name: \"{0}\".", line);
     }
 
-    String tail = noComment.substring(colonIndex + 2).trim();
+    String tail = noComment.substring(colonIndex + 1).trim();
     vr = new Var(name);
     map.put(name, vr);
     if (tail.length() > 0) {
       if (tail.charAt(0) == '[') {
+        vr.setType(VarType.BRACKET_ARR);
         parseBracketArray(tail);
       } else {
         vr.setType(VarType.TXT);
         vr.appendToBuilder(tail);
         vr.build();
       }
-      System.out.println(vr);
     } else {
-      state = State.FIND_VAR;
+      state = State.FIND_TYPE;
     }
   }
 
@@ -96,35 +103,68 @@ public class Parse {
     boolean found = false;
     if (line.charAt(0) == '[') {
       found = true;
+      vr.setType(VarType.BRACKET_ARR);
       parseBracketArray(line);
     }
     if (line.charAt(0) == '-') {
       found = true;
       vr.setType(VarType.HYPHEN_ARR);
       state = State.READ_VAR;
-      int hashIndex = line.indexOf(" #");
-      String noComment = ((hashIndex > 0) ? line.substring(hashIndex + 2) : line).trim();
-      vr.appendToBuilder(noComment + "\n");
+      parseHyphenRow(line);
     }
     if (!found) {
       throw new YmlParseException("Unrecognized type of var \"{0}\".", vr.getName());
     }
   }
 
+  void parseHyphenRow(String line) {
+    String noHyphen = line.substring(1).trim();
+    int hashIndex = noHyphen.indexOf(" #");
+    String noComment = ((hashIndex > 0) ? noHyphen.substring(hashIndex + 2) : noHyphen).trim();
+    vr.appendToBuilder(noComment);
+  }
+
   void parseBracketArray(String tail) throws YmlParseException {
-    vr.setType(VarType.BRACKET_ARR);
     int closing = tail.indexOf(']');
 
-    if (closing > 0) {
+    if (closing >= 0) {
       if (closing == (tail.length() - 1)) {
-        vr.appendToBuilder(tail.substring(1, tail.length() - 1).trim());
+        if (closing > 0) {
+          vr.appendToBuilder(tail.substring(1, tail.length() - 1).trim());
+        }
         vr.build();
+        state = State.FIND_VAR;
       } else {
         throw new YmlParseException("After ']' closing array there cannot be any text: \"{0}\".", tail);
       }
     } else {
       state = State.READ_VAR;
-      vr.appendToBuilder(tail.substring(1).trim());
+      vr.appendToBuilder(" " + tail.substring(1).trim());
+    }
+  }
+
+  void readVar(String line) throws YmlParseException {
+    switch (vr.getType()) {
+      case BRACKET_ARR:
+        parseBracketArray(line);
+        break;
+      case HYPHEN_ARR:
+        if (line.charAt(0) == '-') {
+          vr.appendToBuilder("\n");
+          parseHyphenRow(line);
+        } else {
+          vr.build();
+          state = State.FIND_VAR;
+          findVar(line);
+        }
+        break;
+      default:
+    }
+  }
+
+  void printMap() {
+    for (Var mapVar: map.values()) {
+      System.out.println(mapVar);
     }
   }
 }
