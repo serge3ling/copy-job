@@ -1,0 +1,8 @@
+# The default job file should be named "job.yml".
+from: /home/dev/tmp/src
+to: /home/dev/tmp/tgt
+files: [
+    /home/dev/tmp/src/src1.txt,
+    /home/dev/tmp/src/src2.txt
+]
+forward: no

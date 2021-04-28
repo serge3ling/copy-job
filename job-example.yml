@@ -1,11 +1,15 @@
 # The default job file should be named "job.yml".
-from: /home/dev/gwpc/pc808wc/modules/configuration
-to: /home/dev/gwpc/pc808wc-copy/20290525
+#from: /home/dev/gwpc/pc808wc/modules/configuration
+#to: /home/dev/gwpc/pc808wc-copy/20290525
+from: /home/sergio/tmp/src
+to: /home/sergio/tmp/tgt
 files: [
-  /home/dev/gwpc/pc808wc/modules/configuration/config/web/pcf/account/AccountFile_Summary_BasicInfoDV.pcf,
-  /home/dev/gwpc/pc808wc/modules/configuration/gsrc/gw/pcf/policysummary/PolicySummaryHelper.gs
+  # /home/dev/gwpc/pc808wc/modules/configuration/config/web/pcf/account/AccountFile_Summary_BasicInfoDV.pcf,
+  # /home/dev/gwpc/pc808wc/modules/configuration/gsrc/gw/pcf/policysummary/PolicySummaryHelper.gs
+  /home/sergio/tmp/src/src1.txt,
+  /home/sergio/tmp/src/src2.txt
 ]
-forward: yes
+forward: no
 stub:
   - val1
   - val2

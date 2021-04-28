@@ -9,6 +9,9 @@ public class Main {
     yml.readFile();
     CopyFiles copyFiles = makeCopyFilesByParse(yml);
     copyFiles.go();
+    System.out.println("There were "
+        + copyFiles.getErrors().size()
+        + " errors while copying.");
   }
 
   static CopyFiles makeCopyFilesByParse(Parse parse) {
