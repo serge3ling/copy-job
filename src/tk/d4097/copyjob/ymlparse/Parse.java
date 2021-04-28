@@ -88,7 +88,7 @@ public class Parse {
     if (tail.length() > 0) {
       if (tail.charAt(0) == '[') {
         vr.setType(VarType.BRACKET_ARR);
-        parseBracketArray(tail);
+        parseBracketArray(tail.substring(1));
       } else {
         vr.setType(VarType.TXT);
         vr.appendToBuilder(tail);
@@ -130,7 +130,7 @@ public class Parse {
     if (closing >= 0) {
       if (closing == (tail.length() - 1)) {
         if (closing > 0) {
-          vr.appendToBuilder(tail.substring(1, tail.length() - 1).trim());
+          vr.appendToBuilder(tail.substring(1, closing).trim());
         }
         vr.build();
         state = State.FIND_VAR;
@@ -139,7 +139,7 @@ public class Parse {
       }
     } else {
       state = State.READ_VAR;
-      vr.appendToBuilder(" " + tail.substring(1).trim());
+      vr.appendToBuilder(" " + tail.trim());
     }
   }
 
@@ -166,5 +166,32 @@ public class Parse {
     for (Var mapVar: map.values()) {
       System.out.println(mapVar);
     }
+  }
+
+  public Object getVal(String name, VarType type) {
+    Var mapVar = map.get(name);
+    Object obj = null;
+    if (mapVar != null) {
+      obj = mapVar.getVal();
+    }
+    return obj;
+  }
+
+  public String getTxt(String name) {
+    String s = null;
+    Var mapVar = map.get(name);
+    if ((mapVar != null) && (mapVar.getType() == VarType.TXT)) {
+      s = mapVar.getVal().toString();
+    }
+    return s;
+  }
+
+  public String[] getArr(String name) {
+    String[] s = null;
+    Var mapVar = map.get(name);
+    if ((mapVar != null) && (mapVar.getType() == VarType.ARR)) {
+      s = (String[]) mapVar.getVal();
+    }
+    return s;
   }
 }

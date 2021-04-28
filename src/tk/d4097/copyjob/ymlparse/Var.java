@@ -44,9 +44,11 @@ public class Var {
           break;
         case BRACKET_ARR:
           buildBracketArray();
+          type = VarType.ARR;
           break;
         case HYPHEN_ARR:
           buildHyphenArray();
+          type = VarType.ARR;
           break;
         default:
       }
@@ -95,6 +97,7 @@ public class Var {
         break;
       case BRACKET_ARR:
       case HYPHEN_ARR:
+      case ARR:
         StringBuilder sb = new StringBuilder("[\n");
         for (int i = 0; i < ((String[]) val).length; i++) {
           sb.append(((String[]) val)[i]).append(",\n");
