@@ -5,7 +5,7 @@ import tk.d4097.copyjob.ymlparse.YmlParseException;
 
 public class Main {
   public static void main(String[] args) throws YmlParseException {
-    Parse yml = new Parse("job-example.yml");
+    Parse yml = new Parse("job.yml");
     yml.readFile();
     CopyFiles copyFiles = makeCopyFilesByParse(yml);
     copyFiles.go();
