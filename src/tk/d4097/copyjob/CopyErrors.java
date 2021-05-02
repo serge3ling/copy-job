@@ -21,4 +21,10 @@ public class CopyErrors {
   public CopyError get(int i) {
     return errors.get(i);
   }
+
+  public void print() {
+    for (CopyError err : getErrors()) {
+      System.err.println(err);
+    }
+  }
 }

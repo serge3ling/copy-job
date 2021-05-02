@@ -39,16 +39,16 @@ public class CopyFiles {
       try {
         copyFile(src, tgt);
       } catch (IOException e) {
-        errors.addError(new CopyError(src, tgt));
+        errors.addError(new CopyError(src, tgt, e.toString()));
       }
     }
   }
 
   void copyFile(String src, String tgt) throws IOException {
-    System.out.println(src + " -> " + tgt);
-    Path sourceDirectory = Paths.get(src);
-    Path targetDirectory = Paths.get(tgt);
-    Files.copy(sourceDirectory, targetDirectory, StandardCopyOption.REPLACE_EXISTING);
+    Path sourcePath = Paths.get(src);
+    Path targetPath = Paths.get(tgt);
+    Files.createDirectories(targetPath.getParent());
+    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
   }
 
   public CopyErrors getErrors() {
